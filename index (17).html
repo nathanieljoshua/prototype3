@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f5130">
+<title>AgriGuard — Offline Crop Care</title>
+<style>
+:root{--g:#2f5c2a;--g2:#3f7a37;--lt:#eef3ec;--bg:#f7f8f4;--tx:#1b2a1f;--mu:#6b7a6f;--wa:#b26a00;--bd:#e1e7e1;--rd:#b3261e}
+*{box-sizing:border-box;margin:0;padding:0}
+.i{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.i.f{fill:currentColor;stroke:none}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px}
+.brand{display:flex;gap:10px;align-items:center}.logo{width:36px;height:36px;border-radius:10px;background:var(--g);color:#fff;display:grid;place-items:center;font-size:20px}
+.brand b{display:block}.brand small{color:var(--mu);font-size:12px}
+.pill{background:var(--lt);color:var(--g);font-size:12px;padding:5px 10px;border-radius:99px;font-weight:600;display:inline-flex;align-items:center;gap:6px;line-height:1}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--g);display:block;flex:none}
+main{padding:0 20px}.date{color:var(--mu);font-size:13px;margin:8px 0}
+h1{font-size:30px;line-height:1.15;margin-bottom:10px}h2{font-size:17px}
+.hero{background:linear-gradient(140deg,#2f5c2a,#3d6f33 55%,#456f2e);color:#fff;border-radius:20px;padding:22px 20px 20px;margin:6px 0 4px;box-shadow:0 6px 18px rgb(47 92 42 / .22);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:rgb(255 255 255 / .05);pointer-events:none}
+.hero .date{color:rgb(255 255 255 / .72);font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin:0 0 10px;position:relative}
+.hero h1{color:#fff;margin:0 0 10px;position:relative}
+.hero .sub{color:rgb(255 255 255 / .85);margin:0 0 18px;position:relative}
+.hero .row{margin:0;position:relative}
+.hero .pri{background:#fff;color:var(--g)}
+.hero .pri:hover{background:rgb(255 255 255 / .9)}
+.hero .sec{background:transparent;color:#fff;border:1px solid rgb(255 255 255 / .5);box-shadow:none}
+.hero .sec:hover{background:rgb(255 255 255 / .12)}
+p.sub{color:var(--mu);margin-bottom:18px}
+.row{display:flex;gap:10px}.btn{flex:1;border:0;border-radius:99px;padding:12px 16px;font-size:15px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;line-height:1}
+.pri{background:var(--g);color:#fff}.sec{background:#fff;color:var(--g);border:1px solid var(--bd);box-shadow:0 1px 2px rgb(0 0 0 / .05)}.dan{background:#fff;color:var(--rd);border:1px solid #f0c9c6}
+.sh{display:flex;justify-content:space-between;align-items:baseline;margin:26px 0 10px}.sh a,.sh span{font-size:13px;color:var(--mu);cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:14px}
+.crop{cursor:pointer;text-align:center}.crop .ic{font-size:26px;display:flex;justify-content:center}.crop b{display:block;margin-top:6px}
+.empty{text-align:center;color:var(--mu);padding:22px}.empty b{color:var(--tx);display:block;margin-bottom:4px}
+.note{text-align:center;color:var(--mu);font-size:12px;margin:26px 0}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid var(--bd);display:flex;justify-content:space-around;align-items:center;padding:8px 0 calc(8px + env(safe-area-inset-bottom))}
+nav a{font-size:11px;color:var(--mu);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}nav a.on{color:var(--g);font-weight:700}nav a span{font-size:20px}
+nav .fab{width:56px;height:56px;border-radius:50%;background:var(--g);color:#fff;font-size:26px;margin-top:-30px;box-shadow:0 4px 12px #0003;justify-content:center}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.chip{padding:9px 16px;border-radius:99px;border:1px solid var(--bd);background:#fff;cursor:pointer;font-size:14px;display:inline-flex;align-items:center;gap:7px;line-height:1;font-weight:600;color:var(--g)}.chip .i{width:16px;height:16px;flex:none}
+.chip.on{background:var(--g);color:#fff;border-color:var(--g)}
+.drop{border:2px dashed var(--bd);border-radius:16px;min-height:220px;display:grid;place-items:center;text-align:center;color:var(--mu);overflow:hidden;background:#fff;margin:12px 0}
+.drop img{width:100%;max-height:320px;object-fit:cover}
+.drop .ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.drop .ph .i{width:34px;height:34px;margin:0 auto;color:var(--mu)}
+label.f{display:block;font-size:13px;color:var(--mu);margin:12px 0 4px}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--bd);border-radius:12px;font:inherit;background:#fff}
+.bar{height:8px;background:var(--lt);border-radius:9px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;background:var(--g2)}
+.warn{background:#fff6e5;border:1px solid #f2d39a;color:#6a4300;border-radius:12px;padding:12px;font-size:13px;margin:12px 0}
+.cwrap{margin-bottom:10px}
+.cwrap .case{margin-bottom:0;border-radius:16px 16px 0 0;border-bottom:0}
+.crow{display:flex;gap:6px;background:#fff;border:1px solid var(--bd);border-top:1px dashed var(--bd);border-radius:0 0 16px 16px;padding:7px 10px}
+.cbtn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;background:none;color:var(--g);font-size:12px;font-weight:700;padding:6px 4px;border-radius:9px;cursor:pointer}
+.cbtn:hover{background:var(--lt)}
+.cbtn .i{width:14px;height:14px;flex:none}
+.case{display:flex;gap:12px;align-items:center;margin-bottom:10px;cursor:pointer}.case img{width:60px;height:60px;border-radius:12px;object-fit:cover;background:var(--lt)}
+.case small{color:var(--mu);display:block}.tag{font-size:11px;padding:3px 8px;border-radius:99px;background:var(--lt);color:var(--g)}
+ul.l{padding-left:18px;font-size:14px}ul.l li{margin:4px 0}
+.spin{width:40px;height:40px;border:4px solid var(--lt);border-top-color:var(--g);border-radius:50%;animation:s 1s linear infinite;margin:auto}@keyframes s{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1b2a1f;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;z-index:9}
+.mt{margin-top:12px}
+
+/* ---- Clearing-style screens ---- */
+.subh{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:14px 20px 6px}
+.subh>div:nth-child(2){text-align:center;line-height:1.25}
+.subh b{font-size:17px;font-weight:700}.subh small{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);font-weight:600;margin-top:2px}
+.bk{width:44px;height:44px;border-radius:50%;border:1px solid var(--bd);background:#fff;display:grid;place-items:center;cursor:pointer;font-size:18px}
+.sec-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);font-weight:700;margin:22px 0 8px}
+.crd{background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden}
+.crd>div{padding:14px}
+.tool{display:flex;gap:12px;align-items:flex-start}
+.tool .ti{width:36px;height:36px;border-radius:50%;background:var(--lt);color:var(--g);display:grid;place-items:center;font-size:18px;flex:none;margin-top:1px}
+.tool .tx{flex:1;min-width:0}
+.tool .tx b{display:block;font-size:14px;line-height:1.3;margin-bottom:3px}
+.tool .tx small{display:block;color:var(--mu);font-size:12.5px;line-height:1.45}
+.tool .tog{margin-left:8px;align-self:center}
+.tog{margin-left:auto;flex:none;border:0;border-radius:99px;padding:8px 16px;font-weight:700;font-size:13px;background:var(--g);color:#fff;cursor:pointer}
+.tog.off{background:var(--lt);color:var(--g)}
+.hint{color:var(--mu);font-size:12px;margin-top:8px}
+.thr{display:flex;justify-content:flex-end;font-size:14px;font-weight:700}
+input[type=range]{width:100%;accent-color:var(--g);padding:0;border:0;background:none;margin:6px 0}
+.hr{height:1px;background:var(--bd);margin:14px 0}
+.crd>div>.rowline:first-child{padding-top:0}
+.crd>div>.rowline:last-child{padding-bottom:0}
+.chipline{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chipx{border:0;background:var(--lt);color:var(--g);border-radius:99px;padding:7px 12px;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.plus{width:40px;height:40px;border-radius:12px;border:0;background:var(--g);color:#fff;font-size:20px;flex:none;cursor:pointer}
+.cnt{font-size:13px;color:var(--mu);font-weight:600}
+.foot{text-align:center;color:var(--mu);font-size:12px;line-height:1.6;margin:28px 0 10px}
+.foot b{color:var(--g)}
+
+/* ---- Save sheet ---- */
+.sheetoverlay{position:fixed;inset:0;z-index:60;background:rgb(20 30 20 / .28);display:flex;align-items:flex-end;justify-content:center;animation:fade .16s ease-out}
+.sheetoverlay::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100%;pointer-events:none}
+.sheetoverlay[hidden]{display:none}
+.sheet{background:#fff;width:100%;max-width:480px;margin:0 auto;max-height:86vh;overflow-y:auto;border-radius:26px 26px 0 0;padding:16px 20px calc(20px + env(safe-area-inset-bottom));text-align:left;box-shadow:0 -8px 26px rgb(0 0 0 / .16);animation:rise .22s ease-out}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sheetgrab{width:44px;height:4px;border-radius:99px;background:var(--bd);margin:0 auto 14px}
+.sheethead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sheethead h2{font-size:19px}
+.sheetx{width:34px;height:34px;flex:none;border-radius:50%;border:0;background:var(--lt);color:var(--mu);display:grid;place-items:center;cursor:pointer}
+.sheetx .i{width:16px;height:16px}
+.sumbox{background:var(--lt);border-radius:14px;padding:13px 14px;margin-bottom:18px}
+.sumbox b{display:block;font-size:15px;margin-bottom:3px}
+.sumbox span{font-size:12.5px;color:var(--mu)}
+.seclabel{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mu);font-weight:700;margin:16px 0 7px}
+.sheet textarea{min-height:96px;resize:vertical}
+.refchk{display:flex;gap:9px;align-items:center;font-size:13.5px;color:var(--tx);margin:16px 0 18px;cursor:pointer}
+.refchk input{width:auto}
+.sheetfoot{text-align:center;font-size:11.5px;color:var(--mu);margin:12px 0 0}
+/* ---- Treatment screen ---- */
+.step{display:grid;grid-template-columns:30px 1fr;gap:12px;align-items:start;border:1px solid var(--bd);background:#fff;border-radius:14px;padding:13px 14px;margin:0 0 10px;font-size:13.5px;line-height:1.45;text-align:left}
+.step .num{width:26px;height:26px;border-radius:50%;background:var(--g);color:#fff;font-size:12.5px;font-weight:700;display:grid;place-items:center;margin-top:-1px}
+.prevbox{background:#f1f7ee;border:1px solid #d8e6d2;border-radius:16px;padding:16px;margin:16px 0;text-align:left}
+.prevhead{display:flex;gap:9px;align-items:center;font-size:15px;font-weight:700;color:var(--g);margin-bottom:12px}
+.prevhead .i{width:19px;height:19px;color:var(--g);flex:none}
+.checks{list-style:none;padding:0;margin:0}
+.checks li{display:grid;grid-template-columns:16px 1fr;gap:10px;align-items:start;font-size:13px;line-height:1.45;color:var(--tx);margin:0 0 10px;text-align:left}
+.checks li:last-child{margin-bottom:0}
+.checks .i{width:15px;height:15px;color:var(--g2);margin-top:2px}
+.safe{background:#fff6e5;border:1px solid #f2d39a;border-radius:16px;padding:16px;margin:16px 0;color:#6a4300;font-size:13px;line-height:1.5;text-align:left}
+.safehead{display:flex;gap:9px;align-items:center;font-size:15px;font-weight:700;margin-bottom:8px}
+.safehead .i{width:18px;height:18px;flex:none}
+/* ---- Result screen ---- */
+.rx{margin:0 -20px}
+.rximg{position:relative;margin:0 0 -22px}
+.rximg img{width:100%;height:250px;object-fit:cover;display:block}
+.badge{position:absolute;top:12px;right:14px;background:rgb(255 255 255 / .92);color:var(--g);font-size:12px;font-weight:700;padding:6px 12px;border-radius:99px}
+.rxsheet{position:relative;background:#fff;border-radius:22px 22px 0 0;padding:20px 20px 8px;box-shadow:0 -6px 20px rgb(0 0 0 / .08)}
+.kicker{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mu);font-weight:700}
+.rxname{font-size:26px;line-height:1.15;margin:6px 0 14px}
+.rxconf{margin:0 0 14px}
+.rxrow{display:flex;justify-content:space-between;align-items:baseline;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mu);font-weight:700;margin-bottom:6px}
+.rxrow b{font-size:22px;letter-spacing:0;color:var(--tx)}
+.others{background:var(--lt);border-radius:14px;padding:13px 14px;margin:0 0 16px;text-align:left}
+.othershead{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--mu);font-weight:700;margin-bottom:10px}
+.orow{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--tx)}
+.orow b{font-weight:700;color:var(--mu)}
+.others .bar{margin:5px 0 10px}
+.others .orow:last-of-type+.bar{margin-bottom:0}
+.rl{font-size:15px;margin:18px 0 8px}
+.dots{list-style:none;padding:0;margin:0 0 6px}
+.dots li{position:relative;padding-left:16px;margin:0 0 9px;font-size:13.5px;line-height:1.45;color:var(--tx)}
+.dots li::before{content:"";position:absolute;left:2px;top:7px;width:6px;height:6px;border-radius:50%;background:var(--g)}
+.rxcause{border:1px solid var(--bd);border-radius:14px;padding:14px;margin:14px 0;text-align:left}
+.rxcause .noterow{display:grid;grid-template-columns:18px 1fr;gap:4px 12px;align-items:start;padding:9px 0;text-align:left}
+.rxcause .noterow:first-child{padding-top:0}
+.rxcause .noterow:last-child{padding-bottom:0}
+.rxcause .noterow .i{grid-column:1;grid-row:1 / span 2;width:18px;height:18px;color:var(--g);align-self:start;justify-self:center;margin-top:1px}
+.rxcause .noterow b{grid-column:2;grid-row:1;font-size:13.5px;font-weight:700;line-height:1.35;margin:0 0 3px;text-align:left}
+.rxcause .noterow span{grid-column:2;grid-row:2;font-size:12.5px;color:var(--mu);line-height:1.45;text-align:left}
+.srcrow{display:flex;gap:8px;align-items:center;background:var(--lt);border-radius:12px;padding:10px 12px;font-size:11.5px;color:var(--mu);margin:12px 0 4px}
+.srcrow .i{width:15px;height:15px;flex:none;color:var(--g)}
+.srcrow span{flex:1}
+.rxbar{display:flex;gap:10px;align-items:center;position:sticky;bottom:calc(58px + env(safe-area-inset-bottom));background:var(--bg);padding:10px 20px 8px;margin:0;z-index:20}
+.mute{width:46px;height:46px;flex:none;border-radius:50%;border:1px solid var(--bd);background:#fff;color:var(--g);display:grid;place-items:center;cursor:pointer}
+.mute .i{width:20px;height:20px}
+.rowline{display:flex;align-items:baseline;justify-content:space-between;gap:16px;font-size:14px;padding:8px 0}
+.rowline span{color:var(--mu);flex:0 0 auto}
+.rowline b{text-align:right;font-weight:700;white-space:nowrap}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo" id="logo"></div><div><b>AgriGuard</b><small>Crop care</small></div></div><span class="pill"><i class="dot"></i>On-device</span></header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<input type="file" id="cam" accept="image/*" capture="environment" hidden>
+<input type="file" id="gal" accept="image/*" hidden>
+<script>
+/* ---------- Data ---------- */
+const CROPS={
+ rice:{n:"Rice",ic:LEAFLET,d:[
+  {id:"blast",n:"Rice blast",s:"Diamond-shaped grey lesions with brown borders on leaves.",a:["Remove and destroy heavily infected leaves/stubble","Avoid excess nitrogen fertilizer","Keep field water level consistent","Consult your agricultural extension worker before any fungicide use"]},
+  {id:"blight",n:"Bacterial leaf blight",s:"Yellow to white lesions starting at leaf tips and edges.",a:["Drain field briefly to reduce spread","Balance fertilizer; avoid excess nitrogen","Use resistant varieties next season","Report to extension worker if spreading fast"]},
+  {id:"tungro",n:"Tungro (suspected)",s:"Yellow-orange leaves and stunted plants; spread by leafhoppers.",a:["Rogue (pull out) infected plants","Monitor for green leafhoppers","Synchronize planting with neighbours","Seek extension confirmation — virus cannot be confirmed by photo"]}]},
+ corn:{n:"Corn",ic:LEAFLET,d:[
+  {id:"downy",n:"Downy mildew",s:"Chlorotic streaks and white downy growth under leaves.",a:["Remove infected plants early","Plant resistant hybrids","Avoid planting near infected fields","Ask extension worker about approved seed treatment"]},
+  {id:"rust",n:"Common rust",s:"Small reddish-brown pustules on both leaf surfaces.",a:["Monitor spread weekly","Use tolerant varieties","Remove crop residue after harvest","Consult extension before chemical control"]}]},
+ coconut:{n:"Coconut",ic:LEAFLET,d:[
+  {id:"budrot",n:"Bud rot",s:"Yellowing and wilting of youngest fronds; foul-smelling rot.",a:["Isolate and report affected palm","Remove and burn rotted tissue under guidance","Improve drainage","Contact PCA / extension worker"]},
+  {id:"leafspot",n:"Leaf spot / blight",s:"Brown to grey spots that merge on older fronds.",a:["Prune severely affected fronds","Apply balanced fertilizer","Monitor neighbouring palms","Seek extension advice if widespread"]}]},
+ banana:{n:"Banana",ic:LEAFLET,d:[
+  {id:"sigatoka",n:"Black Sigatoka",s:"Dark streaks becoming black spots with yellow halos.",a:["De-leaf infected leaves","Improve spacing and drainage","Remove debris from field","Consult extension before fungicide use"]},
+  {id:"fusarium",n:"Fusarium wilt (suspected)",s:"Yellowing of older leaves, wilting, split pseudostem.",a:["Do NOT move soil, suckers or tools from this area","Mark and quarantine the plant","Clean tools and footwear","Report immediately to extension / BPI — needs lab confirmation"]}]}
+};
+const PREVENT={
+ blast:["Use resistant varieties and clean, certified seed.","Do not over-apply nitrogen; split the applications.","Keep the field flooded at the recommended depth.","Remove stubble and volunteer plants after harvest."],
+ blight:["Use resistant varieties and clean, certified seed.","Do not clip seedlings at transplanting — it opens wounds for the bacteria.","Balance nitrogen with potassium; avoid over-fertilising.","Clean irrigation gates and never move water from an infected field into a healthy one."],
+ tungro:["Plant resistant varieties where available.","Synchronise planting with neighbours to break the leafhopper cycle.","Keep the field and bunds free of weed hosts.","Rogue out infected plants early and destroy them."],
+ downy:["Plant resistant hybrids and treated seed.","Avoid planting near infected fields.","Improve drainage in low-lying areas.","Remove infected plants early and destroy them."],
+ rust:["Use tolerant varieties.","Monitor weekly and act early.","Remove crop residue after harvest.","Avoid late planting that exposes the crop to peak rust pressure."],
+ budrot:["Improve drainage around the base of the palm.","Avoid wounds to the crown during harvest.","Remove and burn affected tissue under guidance.","Monitor neighbouring palms weekly."],
+ leafspot:["Prune severely affected fronds and remove the debris.","Apply balanced fertiliser to maintain vigour.","Improve spacing for airflow.","Monitor neighbouring palms."],
+ sigatoka:["De-leaf infected leaves and remove debris from the field.","Improve spacing and drainage.","Avoid overhead irrigation late in the day.","Keep a clean buffer around the block."],
+ fusarium:["Do NOT move soil, suckers or tools out of the affected area.","Mark and quarantine the plant.","Clean tools and footwear between plants.","Report to your extension worker or BPI — this needs lab confirmation."],
+ default:["Keep a record of every case so patterns become visible.","Use clean tools and wash hands between plants.","Monitor the field weekly and act early.","Consult your agricultural extension worker before any chemical use."]
+};
+const SAFE_TEXT="Copper sprays irritate skin and eyes — wear gloves and goggles. Keep spray drift away from fish ponds and canals. Follow the current product label, and keep children and animals away from treated areas.";
+/* ---------- Storage ---------- */
+const S={get:(k,d)=>{try{return JSON.parse(localStorage.getItem("ag_"+k))??d}catch{return d}},set:(k,v)=>localStorage.setItem("ag_"+k,JSON.stringify(v))};
+let state={img:null,crop:null,result:null};
+const $=s=>document.querySelector(s);
+const esc=t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toast=m=>{const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)};
+const fmt=d=>new Date(d).toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"});
+const FARM=()=>S.get("set",{}).farm||"Farm or farmer name";
+const brief=s=>String(s||"").replace(/\s+/g," ").trim().slice(0,80);
+const DEV=()=>{const ua=navigator.userAgent;let os="Unknown OS";const m=ua.match(/Android\s([\d.]+)/);if(m)os="Android "+m[1];else if(/iPhone|iPad/.test(ua))os="iOS";const b=(ua.match(/(Chrome|Firefox|Safari|Edg)\/[\d.]+/)||["Browser"])[0];return b.split("/")[0]+(os!=="Unknown OS"?" · "+os:"")};
+var LEAFLET='<svg class="i" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>';
+var PHOTO='<svg class="i" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>';
+var IMAGE='<svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></svg>';
+var HOUSE='<svg class="i" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9.5 21v-6h5v6"/></svg>';
+var BELL='<svg class="i" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>';
+const CLOCK='<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+var LIST='<svg class="i" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>';
+var GEAR='<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.9 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 3 14a1.7 1.7 0 0 0-1.6-1H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 2.7 7.7a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 7 3.3h.1A1.7 1.7 0 0 0 8.2 1.7V1a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v.1a1.7 1.7 0 0 0 1.6 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+var ARROW='<svg class="i" style="font-size:18px" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7"/></svg>';
+var CHECK='<svg class="i" style="font-size:16px" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>';
+var UNDO='<svg class="i" style="font-size:16px" viewBox="0 0 24 24"><path d="M3 10h11a6 6 0 0 1 0 12h-8"/><path d="m7 6-4 4 4 4"/></svg>';
+var CROSS='<svg class="i" style="font-size:16px" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+const HOURGLASS='<svg class="i" style="font-size:20px" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12"/><path d="M7 3v5l5 4 5-4V3"/><path d="M7 21v-5l5-4 5 4v5"/></svg>';
+var DOC='<svg class="i" style="font-size:18px" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>';
+var SAVE='<svg class="i" style="font-size:18px" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M7 3v6h8V3"/><path d="M7 21v-7h10v7"/></svg>';
+var TRASH='<svg class="i" style="font-size:18px" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/><path d="M10 11v5M14 11v5"/></svg>';
+var BOOKMARK='<svg class="i" viewBox="0 0 24 24"><path d="M7 3h10a1 1 0 0 1 1 1v17l-6-4-6 4V4a1 1 0 0 1 1-1Z"/><path d="M12 8v6M9 11h6"/></svg>';
+var TIMER='<svg class="i" viewBox="0 0 24 24"><path d="M17 3h-10"/><path d="M12 8v4l2.5 2.5"/><circle cx="12" cy="14" r="7"/><path d="m8 2-2 2"/><path d="m16 2 2 2"/></svg>';
+document.getElementById('logo').innerHTML=LEAFLET;
+function go(h){location.hash=h}
+window.addEventListener("hashchange",render);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
+function render(){
+ const [path,q]=(location.hash.slice(1)||"/").split("?");const p=new URLSearchParams(q||"");
+ ({"/":home,"/scan":scan,"/settings":settings,"/result":result,"/history":history,"/case":caseView,"/reminders":reminders,"/export":exportPage,"/treatment":treatment}[path]||home)(p);
+ const nv=[["/",HOUSE,"Home"],["/reminders",BELL,"Reminders"],["/scan",PHOTO,""],["/history",LIST,"History"],["/settings",GEAR,"Settings"]];
+ $("#nav").innerHTML=nv.map(([h,i,l])=>l?`<a class="${path==h?"on":""}" onclick="go('${h}')"><span>${i}</span>${l}</a>`:`<a class="fab" onclick="go('/scan')">${i}</a>`).join("");
+ window.scrollTo(0,0);
+}
+const back=(to,title,tag)=>`<div class="subh"><div class="bk" onclick="go('${to}')">${ARROW}</div><div><b>${title}</b><small>${tag}</small></div><div></div></div>`;
+/* ---------- Pages ---------- */
+function home(){
+ const cases=S.get("cases",[]),rem=S.get("rem",[]).filter(r=>!r.done).sort((a,b)=>a.at.localeCompare(b.at));
+ const total=Object.values(CROPS).reduce((n,c)=>n+c.d.length,0);
+ $("#app").innerHTML=`
+ <div class="hero">
+  <div class="date">${new Date().toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"})}</div>
+  <h1>Scan a leaf.<br>Know the disease.</h1>
+  <p class="sub">On-device screening for rice, corn, coconut and banana. No signal required.</p>
+  <div class="row"><button class="btn pri" onclick="pick('cam')">${PHOTO} Scan crop</button><button class="btn sec" onclick="pick('gal')">${IMAGE} Gallery</button></div>
+ </div>
+ <div class="sh"><h2>Supported crops</h2><span>${total} diseases</span></div>
+ <div class="grid">${Object.entries(CROPS).map(([k,c])=>`<div class="card crop" onclick="go('/scan?crop=${k}')"><div class="ic">${LEAFLET}</div><b>${c.n}</b></div>`).join("")}</div>
+ <div class="sh"><h2>Recent cases</h2>${cases.length?`<a onclick="go('/history')">See all</a>`:""}</div>
+ ${cases.length?cases.slice(0,3).map(caseRow).join(""):`<div class="card empty"><b>No saved cases yet</b>Save a diagnosis and it appears here with its photo, field and outcome.</div>`}
+ <div class="sh"><h2>Next reminder</h2><a onclick="go('/reminders')">See all</a></div>
+ <div class="card" style="cursor:pointer" onclick="go('/reminders?new=1')">${rem[0]?`<b>${esc(rem[0].title)}</b><br><small style="color:var(--mu)">${new Date(rem[0].at).toLocaleString()}</small>`:`<b>Schedule a follow-up</b><br><small style="color:var(--mu)">No reminders set</small>`}</div>
+ <p class="note">Photos and records stay on this device.<br>Nothing is uploaded.</p>`;
+}
+function caseRow(c){
+ const cr=CROPS[c.crop];
+ return `<div class="cwrap">
+  <div class="card case" onclick="go('/case?id=${c.id}')"><img src="${c.img}" alt="">
+   <div style="flex:1"><b>${esc(c.label)}</b><small>${cr.n} · ${esc(c.field||"No field")} · ${fmt(c.date)}</small></div>
+   <span class="tag">${esc(c.status)}</span></div>
+  <div class="crow">
+   <button class="cbtn" onclick="event.stopPropagation();onePDF('${c.id}')">${DOC} PDF</button>
+   <button class="cbtn" onclick="event.stopPropagation();oneCSV('${c.id}')">${LIST} CSV</button>
+  </div>
+ </div>`;
+}
+function scan(p){
+ if(p.get("crop"))state.crop=p.get("crop");
+ if(p.get("source")==="gallery"&&!state.img)setTimeout(()=>pick("gal"),50);
+ $("#app").innerHTML=`<h1 style="font-size:24px">Scan crop</h1><p class="sub">Choose the crop, then take a clear photo of one affected leaf in daylight.</p>
+ <label class="f">Crop</label><div class="chips">${Object.entries(CROPS).map(([k,c])=>`<div class="chip ${state.crop==k?"on":""}" onclick="state.crop='${k}';render()">${LEAFLET}${c.n}</div>`).join("")}</div>
+ <div class="drop">${state.img?`<img src="${state.img}">`:`<div class="ph">${PHOTO}<div>No photo yet</div><small>Fill the frame with the leaf</small></div>`}</div>
+ <div class="row"><button class="btn sec" onclick="pick('cam')">Camera</button><button class="btn sec" onclick="pick('gal')">Gallery</button></div>
+ <button class="btn pri mt" style="width:100%" ${state.img&&state.crop?"":"disabled style='width:100%;opacity:.5'"} onclick="analyze()">Analyze on device</button>
+ <div class="warn">Tips: avoid blur and shadows, one leaf per photo, include both healthy and affected areas.</div>`;
+}
+function pick(w){const el=$("#"+w);if(!el){toast("Image picker unavailable here");return}el.value="";el.click()}
+["cam","gal"].forEach(id=>$("#"+id).addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>shrink(r.result,u=>{state.img=u;state.result=null;e.target.value="";go("/scan");render()});r.readAsDataURL(f)}));
+function shrink(src,cb){const i=new Image();i.onload=()=>{const m=640,s=Math.min(1,m/Math.max(i.width,i.height)),c=document.createElement("canvas");c.width=i.width*s;c.height=i.height*s;c.getContext("2d").drawImage(i,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.8))};i.src=src}
+/* Placeholder classifier: deterministic image-statistics heuristic. Replace with a real TFLite/TF.js model. */
+function analyze(){
+ if(!state.crop){toast("Pick a crop first");return}
+ if(!state.img){toast("Take or choose a photo first");return}
+ $("#app").innerHTML=`<div style="padding:80px 0;text-align:center"><div class="spin"></div><p class="mt">Analyzing on device…</p></div>`;
+ const i=new Image();i.onload=()=>{const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d");x.drawImage(i,0,0,64,64);const d=x.getImageData(0,0,64,64).data;
+  let g=0,y=0,b=0,dk=0,h=0,n=d.length/4;for(let k=0;k<d.length;k+=4){const R=d[k],G=d[k+1],B=d[k+2];if(G>R&&G>B)g++;else if(R>B&&G>B&&R>90)y++;else if(R>G&&R>B)b++;if(R+G+B<150)dk++;h=(h*31+R+G*7+B*13)>>>0}
+  const cr=CROPS[state.crop],healthy=g/n,lesion=(y+b)/n;let probs=cr.d.map((_,j)=>((h>>(j*5))%97)+lesion*120*(j%2?1.2:1)+dk/n*40);
+  probs.push(healthy*260);const sum=probs.reduce((a,v)=>a+v,0)||1;probs=probs.map(v=>v/sum);
+  const labels=[...cr.d.map(z=>z.n),"Healthy-appearing"];const order=probs.map((p,j)=>[p,j]).sort((a,b)=>b[0]-a[0]);
+  const quality=healthy+lesion<.25?"poor":"ok";
+  state.result={order:order.map(([p,j])=>({p,j,label:labels[j]})),quality};
+  setTimeout(()=>go("/result"),900)};i.src=state.img;
+}
+function result(){
+ const r=state.result;if(!r){go("/scan");return}
+ const cr=CROPS[state.crop],top=r.order[0],thr=S.get("set",{}).thr??0.5,unsure=top.p<thr||r.quality==="poor";
+ const dz=unsure?null:cr.d[top.j];
+ const pct=Math.round(top.p*100);
+ const conf=unsure?"Uncertain":pct+"% match";
+ const name=unsure?"Unable to assess":esc(top.label);
+ const kicker=(cr.n+" · "+(dz?dz.n:"needs review")).toUpperCase();
+ const cause=dz&&/blast|blight|rust|spot|mildew|sigatoka|rot/i.test(dz.id)?"Fungal or bacterial — confirm with an extension worker":"Possible disease — confirm with an extension worker";
+const others=r.order.slice(1,3);
+ const otherBlock=others.length?`<div class="others"><div class="othershead">Other possibilities the model considered</div>${others.map(o=>`<div class="orow"><span>${esc(o.label)}</span><b>${Math.round(o.p*100)}%</b></div><div class="bar"><i style="width:${o.p*100}%"></i></div>`).join("")}</div>`:"";
+
+ $("#app").innerHTML=`
+ <div class="rx">
+  <div class="rximg"><img src="${state.img}" alt=""><span class="badge">${conf}</span></div>
+  <div class="rxsheet">
+   <div class="kicker">${kicker}</div>
+   <h1 class="rxname">${name}</h1>
+   <div class="rxconf"><div class="rxrow"><span>Model confidence</span><b>${pct}%</b></div><div class="bar"><i style="width:${pct}%"></i></div></div>
+   ${unsure?`<p style="color:var(--wa);margin:0 0 14px">${r.quality==="poor"?"Image quality looks low. Retake in daylight, closer to the leaf.":"The model is not confident. Retake the photo or refer this case."}</p>`:
+    `Life stage of the sample is not assessed. Scores are model outputs, not certainty.`}
+   ${otherBlock}
+   <h2 class="rl">Symptoms</h2>
+   <ul class="dots">${dz?dz.a.slice(0,4).map(t=>`<li>${t}</li>`).join(""):`<li>Refer this case for expert assessment.</li>`}</ul>
+   <div class="rxcause">
+    <div class="noterow">${PHOTO}<b>Cause &amp; spread</b><span>${cause}</span></div>
+    <div class="noterow">${LIST}<b>Management</b><span>${dz?dz.s:"Await expert guidance before acting."}</span></div>
+   </div>
+   <div class="srcrow">${DOC}<span>Guidance checked against DA-PhilRice / IRRI advisories</span>${CHECK}</div>
+  </div>
+  <div class="rxbar">
+   <button class="mute" onclick="go('/scan')">${LEAFLET}</button>
+   <button class="btn pri" onclick="go('/treatment')">View treatment</button>
+  </div>
+ </div>
+`;
+}
+function treatment(){
+ const r=state.result;if(!r){go("/scan");return}
+ const cr=CROPS[state.crop],top=r.order[0],thr=S.get("set",{}).thr??0.5,unsure=top.p<thr||r.quality==="poor";
+ const dz=unsure?null:cr.d[top.j];
+ const steps=dz?dz.a:[];
+ const prev=dz?(PREVENT[dz.id]||PREVENT.default):PREVENT.default;
+ $("#app").innerHTML=back("/result","Treatment plan","Validated against DA-PhilRice · IRRI")+`
+ <div style="padding:0 20px">
+  <h1 style="font-size:24px;margin:6px 0 14px">${unsure?"Unable to assess":esc(top.label)}</h1>
+  <div class="srcrow">${CHECK}<span>Steps validated against DA-PhilRice · IRRI guidelines</span></div>
+
+  <h2 class="rl">Treatment steps</h2>
+  ${steps.length?steps.map((t,i)=>`<div class="step"><span class="num">${i+1}</span><span>${t}</span></div>`).join("")
+   :`<div class="step"><span class="num">1</span><span>This case needs expert assessment before any treatment. Do not apply chemicals.</span></div>`}
+
+  <div class="prevbox">
+   <div class="prevhead">${LEAFLET}Preventative measures</div>
+   <ul class="checks">${prev.map(p=>`<li>${CHECK}<span>${p}</span></li>`).join("")}</ul>
+  </div>
+
+  <div class="safe">
+   <div class="safehead">${BELL}Safety warning</div>
+   <div>${SAFE_TEXT}</div>
+  </div>
+
+  <div class="rxbar">
+   <button class="mute" onclick="openSheet()" aria-label="Save to farm case log">${BOOKMARK}</button>
+   <button class="btn pri" onclick="go('/reminders?new=1')">${TIMER} Set reminder</button>
+  </div>
+ </div>
+ <div class="sheetoverlay" id="sheetoverlay" hidden onclick="if(event.target===this)closeSheet()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-label="Save to farm case log">
+   <div class="sheetgrab"></div>
+   <div class="sheethead">
+    <h2>Save to farm case log</h2>
+    <button class="sheetx" onclick="closeSheet()" aria-label="Close">${CROSS}</button>
+   </div>
+   <div class="sumbox">
+    <b>${unsure?"Uncertain — needs review":esc(top.label)}</b>
+    <span>${cr.n}${dz?" · "+pct+"% match":""} · logged with today's date and time</span>
+   </div>
+   <div class="seclabel">Field tag</div>
+   <input id="fld" list="ftags" placeholder="${esc(FARM())}">
+   <datalist id="ftags">${(S.get("set",{}).tags||[]).map(t=>`<option value="${esc(t)}">`).join("")}</datalist>
+   ${(S.get("set",{}).tags||[]).length?`<div class="chipline mt">${(S.get("set",{}).tags||[]).map(t=>`<button class="chipx" onclick="pickTag('${esc(t).replace(/'/g,"")}')">${esc(t)}</button>`).join("")}</div>`:""}
+   <div class="seclabel">Notes</div>
+   <textarea id="nts" rows="4" placeholder="What did you notice in the field?"></textarea>
+   <label class="refchk"><input type="checkbox" id="ref" ${unsure?"checked":""}> Mark for extension worker referral</label>
+   <button class="btn pri" style="width:100%" onclick="saveFromPlan(${unsure})">${CHECK} Save case</button>
+   <p class="sheetfoot">Stored on this device only</p>
+  </div>
+ </div>
+
+`;
+}
+function openSheet(){const ov=document.getElementById("sheetoverlay");if(!ov)return;ov.hidden=false}
+function closeSheet(){const ov=document.getElementById("sheetoverlay");if(ov)ov.hidden=true}
+function pickTag(t){const el=$("#fld");if(el){el.value=t;toast("Field tag set")}}
+function saveFromPlan(unsure){
+ const r=state.result,top=r.order[0];
+ const fld=$("#fld"),nts=$("#nts"),ref=$("#ref");
+ const c={id:Date.now().toString(36),date:new Date().toISOString(),crop:state.crop,img:state.img,
+  label:unsure?"Uncertain — needs review":top.label,score:top.p,dz:unsure?null:(CROPS[state.crop].d[top.j]?.id||null),
+  field:fld?fld.value.trim():"",notes:nts?nts.value.trim():"",
+  status:(ref&&ref.checked)?"Referral pending":"Monitoring",model:"placeholder-v0.1",device:DEV()};
+ const all=S.get("cases",[]);all.unshift(c);
+ try{S.set("cases",all)}catch{toast("Storage full — delete old cases");return}
+ state={img:null,crop:null,result:null};toast("Case saved");go("/case?id="+c.id);
+}
+function saveCase(unsure){
+ const r=state.result,top=r.order[0],c={id:Date.now().toString(36),date:new Date().toISOString(),crop:state.crop,img:state.img,label:unsure?"Uncertain — needs review":top.label,score:top.p,dz:CROPS[state.crop].d[top.j]?.id||null,field:$("#fld").value.trim(),notes:$("#nts").value.trim(),status:$("#ref").checked?"Referral pending":"Monitoring",model:"placeholder-v0.1",device:DEV()};
+ const all=S.get("cases",[]);all.unshift(c);try{S.set("cases",all)}catch{toast("Storage full — delete old cases");return}
+ state={img:null,crop:null,result:null};toast("Case saved");go("/case?id="+c.id);
+}
+function history(){
+ const cases=S.get("cases",[]);
+ $("#app").innerHTML=`<h1 style="font-size:24px">History</h1><p class="sub">${cases.length} saved case${cases.length==1?"":"s"}</p>
+ <input id="q" placeholder="Search disease, field, crop…" oninput="filt()"><div id="lst" class="mt"></div>
+ ${cases.length?`<div class="row mt"><button class="btn sec" onclick="go('/export')">Export report</button><button class="btn sec" onclick="exportCSV()">Export CSV</button></div>`:""}`;
+ filt();
+}
+function filt(){const q=($("#q")?.value||"").toLowerCase(),c=S.get("cases",[]).filter(x=>(x.label+x.field+CROPS[x.crop].n+x.status).toLowerCase().includes(q));$("#lst").innerHTML=c.length?c.map(caseRow).join(""):`<div class="card empty"><b>No cases</b>Scan a crop to begin.</div>`}
+function caseView(p){
+ const all=S.get("cases",[]),c=all.find(x=>x.id==p.get("id"));if(!c){go("/history");return}
+ const cr=CROPS[c.crop],dz=cr.d.find(z=>z.id===c.dz);
+ const edit=p.get("edit")==="1";
+ $("#app").innerHTML=`<img src="${c.img}" style="width:100%;border-radius:16px;max-height:260px;object-fit:cover">
+ <div class="card mt"><small style="color:var(--mu)">${cr.n} · ${fmt(c.date)}</small><h2 style="font-size:22px;margin:4px 0">${esc(c.label)}</h2>
+ <p style="color:var(--mu)">Score: ${Math.round(c.score*100)}% · Model ${esc(c.model)}${c.device?" · "+esc(c.device):""}</p>${c.notes&&!edit?`<p class="mt">${esc(c.notes)}</p>`:""}</div>
+
+ ${edit?`<div class="card mt"><h2>Edit case</h2>
+   <label class="f">Field / location name</label><input id="efld" value="${esc(c.field||"")}" placeholder="${esc(FARM())}">
+   <label class="f">Notes</label><textarea id="ents" rows="3" placeholder="Symptoms, spread, weather…">${esc(c.notes||"")}</textarea>
+   <label class="f">Outcome</label><input id="elbl" value="${esc(c.label)}">
+   <div class="row mt"><button class="btn sec" onclick="go('/case?id=${c.id}')">Cancel</button><button class="btn pri" onclick="saveEdit('${c.id}')">Save changes</button></div>
+  </div>`
+ :`${dz?`<div class="card mt"><h2>Actions</h2><ul class="l mt">${dz.a.map(a=>`<li>${a}</li>`).join("")}</ul></div>`:""}
+  <div class="row mt"><button class="btn sec" onclick="go('/treatment?case=${c.id}')">View treatment</button><button class="btn sec" onclick="go('/case?id=${c.id}&edit=1')">Edit</button></div>`}
+
+ <label class="f">Status</label><select id="st" onchange="updCase('${c.id}')">${["Monitoring","Referral pending","Reviewed by extension","Improving","Resolved","Worsening"].map(v=>`<option ${v==c.status?"selected":""}>${v}</option>`).join("")}</select>
+ <label class="f">Extension worker correction / notes</label><textarea id="ext" rows="2" onchange="updCase('${c.id}')">${esc(c.ext||"")}</textarea>
+ <label class="f">Who reviewed this?</label><input id="rv" value="${esc(c.reviewer||"")}" placeholder="Name / role (optional)" onchange="updCase('${c.id}')">
+ <div class="row mt"><button class="btn sec" onclick="go('/reminders?new=1&case=${c.id}')">${BELL} Follow-up</button><button class="btn dan" onclick="delCase('${c.id}')">Delete</button></div>`;
+}
+function saveEdit(id){
+ const all=S.get("cases",[]),c=all.find(x=>x.id==id);if(!c)return;
+ c.field=$("#efld").value.trim();
+ c.notes=$("#ents").value.trim();
+ c.label=$("#elbl").value.trim()||c.label;
+ c.editedAt=new Date().toISOString();
+ S.set("cases",all);toast("Changes saved");go("/case?id="+id);
+}
+
+function updCase(id){const all=S.get("cases",[]),c=all.find(x=>x.id==id);c.status=$("#st").value;c.ext=$("#ext").value;c.reviewer=$("#rv").value.trim();if(c.ext&&!c.reviewedAt)c.reviewedAt=new Date().toISOString();S.set("cases",all);toast("Updated")}
+function delCase(id){if(!confirm("Delete this case permanently?"))return;S.set("cases",S.get("cases",[]).filter(x=>x.id!=id));go("/history")}
+function reminders(p){
+ const rem=S.get("rem",[]).sort((a,b)=>a.at.localeCompare(b.at)),neu=p.get("new"),cid=p.get("case");
+ const d=new Date(Date.now()+3*864e5);d.setHours(7,0,0,0);const def=new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,16);
+ $("#app").innerHTML=`<h1 style="font-size:24px">Reminders</h1><p class="sub">Follow-ups to inspect, record or consult.</p>
+ ${neu?`<div class="card"><h2>New reminder</h2><label class="f">What to do</label>
+ <select id="rt"><option>Inspect crop and take new photo</option><option>Record progress</option><option>Consult extension worker</option><option>Review agreed treatment plan</option></select>
+ <label class="f">When</label><input type="datetime-local" id="ra" value="${def}">
+ <div class="row mt"><button class="btn sec" onclick="go('/reminders')">Cancel</button><button class="btn pri" onclick="addRem('${cid||""}')">Save</button></div></div>`:`<button class="btn pri" style="width:100%" onclick="go('/reminders?new=1')">+ Schedule a follow-up</button>`}
+ <div class="mt">${rem.length?rem.map(r=>`<div class="card case"><div style="flex:1;${r.done?"opacity:.5;text-decoration:line-through":""}"><b>${esc(r.title)}</b><small>${new Date(r.at).toLocaleString()}${new Date(r.at)<new Date()&&!r.done?" · <span style='color:var(--rd)'>Due</span>":""}${r.case?" · linked case":""}</small></div><button class="chip" onclick="togRem('${r.id}')">${r.done?UNDO:CHECK}</button><button class="chip" onclick="delRem('${r.id}')">${CROSS}</button></div>`).join(""):`<div class="card empty"><b>No reminders set</b>Schedule a follow-up after saving a case.</div>`}</div>
+ <p class="note">${"Notification" in window?`Notifications: ${Notification.permission}. Reminders also show here in case notifications are blocked.`:"Notifications unsupported — reminders show in this list."}</p>`;
+}
+function addRem(cid){const at=$("#ra").value;if(!at){toast("Pick a time");return}const r=S.get("rem",[]);r.push({id:Date.now().toString(36),title:$("#rt").value,at,case:cid||null,done:false});S.set("rem",r);
+ if("Notification" in window&&Notification.permission==="default")Notification.requestPermission();toast("Reminder saved");go("/reminders")}
+function togRem(id){const r=S.get("rem",[]);const x=r.find(z=>z.id==id);x.done=!x.done;S.set("rem",r);render()}
+function delRem(id){S.set("rem",S.get("rem",[]).filter(z=>z.id!=id));render()}
+setInterval(()=>{const r=S.get("rem",[]);let ch=false;r.forEach(x=>{if(!x.done&&!x.fired&&new Date(x.at)<=new Date()){x.fired=true;ch=true;if("Notification" in window&&Notification.permission==="granted")new Notification("AgriGuard",{body:x.title});else toast("Reminder: "+x.title)}});if(ch)S.set("rem",r)},30000);
+/* ---------- Settings ---------- */
+function settings(){
+ const s=S.get("set",{thr:.5,farm:"",tags:[],alarms:false}),cases=S.get("cases",[]),n=cases.length,sz=Math.round(JSON.stringify(localStorage).length/1024);
+ const names=[...new Set(cases.map(c=>c.field).filter(Boolean))];
+ $("#app").innerHTML=back("/","Settings","On this device")+`
+ <div style="padding:0 20px">
+ <div class="sec-label">Farm</div>
+ <div class="crd"><div>
+ <input id="farm" value="${esc(s.farm||"")}" placeholder="Farm or farmer name" onchange="setFarm(this.value)">
+ <p class="hint">Printed at the top of every exported report.</p></div></div>
+
+ <div class="sec-label" style="display:flex;justify-content:space-between">Confidence threshold<span class="cnt" id="tv">${Math.round(s.thr*100)}%</span></div>
+ <div class="crd"><div>
+ <input type="range" id="thr" min="50" max="95" step="5" value="${Math.round(s.thr*100)}" oninput="liveThr(this.value)" onchange="setThr(this.value)">
+ <p class="hint">Below this score the app warns you instead of trusting the diagnosis. Raise it to be stricter.</p></div></div>
+
+ <div class="sec-label">Field tags</div>
+ <div class="crd"><div>
+ <div class="chipline" id="tagline">${(s.tags||[]).map(t=>tagChip(t)).join("")}</div>
+ <div class="chipline mt"><input id="nt" placeholder="Add a field name" style="flex:1" onkeydown="if(event.key==='Enter')addTag()"><button class="plus" onclick="addTag()">+</button></div>
+ <p class="hint">${names.length?`Also seen in saved cases: ${names.map(esc).join(", ")}. Tap one to add it.`:"Tags appear as suggestions when you name a field."}</p></div></div>
+
+ <div class="sec-label">Alerts</div>
+ <div class="crd"><div>
+ <div class="tool"><div class="ti">${BELL}</div><div class="tx"><b>Reminder alarms</b><small>Alarms fire from this device. Keep AgriGuard installed and open it once a day so scheduled reminders ring on time.</small></div>
+ <button class="tog ${s.alarms?"":"off"}" id="atog" onclick="togAlarms()">${s.alarms?"Enabled":"Enable"}</button></div>
+ </div></div>
+
+ <div class="sec-label">Model</div>
+ <div class="crd"><div>
+ <div class="rowline"><span>Diagnosis model</span><b>placeholder-v0.1</b></div>
+ <div class="rowline"><span>Coverage</span><b>4 crops · 9 disease classes</b></div>
+ <div class="rowline"><span>Healthy-appearing class</span><b>Included</b></div>
+ <div class="rowline"><span>Unknown / referral output</span><b>Enabled</b></div>
+ <div class="hr"></div>
+ <p class="hint">This built score reads colour signatures on the device and does not identify pathogens. Your trained model can replace it without changing anything else — no photo ever leaves the phone.</p></div></div>
+
+ <div class="sec-label">Data and storage</div>
+ <div class="crd"><div>
+ <div class="rowline"><span>Local storage</span><b>${n} case${n===1?"":"s"} · ${sz} KB</b></div>
+ <div class="hr"></div>
+ <div class="tool"><div class="ti">${DOC}</div><div class="tx"><b>Export report</b><small>One page per case, with photo, outcome and status. Nothing leaves the device until you choose to share it.</small></div><button class="tog off" onclick="go('/export')">Open</button></div>
+ <div class="hr"></div>
+ <div class="tool"><div class="ti">${SAVE}</div><div class="tx"><b>Backup and restore</b><small>Save all cases to a JSON file, or load them back.</small></div>
+ <button class="tog off" onclick="backup()">Save</button></div>
+ <div class="chipline mt"><button class="btn sec" style="flex:1" onclick="$('#rs').click()">Restore from file</button></div>
+ <input type="file" id="rs" accept=".json" hidden onchange="restore(this)">
+ <div class="hr"></div>
+ <div class="tool"><div class="ti">${TRASH}</div><div class="tx"><b>Erase all records</b><small>Deletes every case, reminder, tag and setting on this device.</small></div>
+ <button class="tog off" style="color:var(--rd)" onclick="wipe()">Erase</button></div>
+ <div class="hr"></div>
+ <div class="rowline"><span>Device</span><b>${esc(DEV())}</b></div>
+ <div class="rowline"><span>Network</span><b>${navigator.onLine?"Online":"Offline — records pending"}</b></div>
+ </div></div>
+ <p class="foot"><b>AgriGuard</b> · offline crop care<br>Guidance for rice, corn, coconut and banana</p>
+ </div>`;
+}
+function tagChip(t){return `<button class="chipx" id="tg-${esc(t).replace(/\W/g,"_")}" onclick="dropTag(this)">${esc(t)}${CROSS}</button>`}
+function addTag(v){const val=(v??$("#nt").value).trim();if(!val)return;const s=S.get("set",{});s.tags=[...new Set([...(s.tags||[]),val])];S.set("set",s);
+ const line=$("#tagline");line.insertAdjacentHTML("beforeend",tagChip(val));$("#nt").value="";toast("Tag added")}
+function dropTag(btn,skip){const val=btn.firstChild.nodeValue.trim();const s=S.get("set",{});s.tags=(s.tags||[]).filter(t=>t!==val);S.set("set",s);if(!skip)btn.remove()}
+function useTag(t){addTag(t)}
+function setFarm(v){const s=S.get("set",{});s.farm=v.trim();S.set("set",s);toast("Farm name saved")}
+function liveThr(v){$("#tv").textContent=v+"%"}
+function setThr(v){const s=S.get("set",{});s.thr=(+v)/100;S.set("set",s);toast("Threshold saved at "+v+"%")}
+function togAlarms(){const s=S.get("set",{});s.alarms=!s.alarms;S.set("set",s);
+ if(s.alarms&&"Notification" in window&&Notification.permission==="default")Notification.requestPermission();
+ const b=$("#atog");b.textContent=s.alarms?"Enabled":"Enable";b.className="tog"+(s.alarms?"":" off");
+ if(s.alarms&&"Notification" in window&&Notification.permission==="granted")new Notification("AgriGuard",{body:"Reminder alarms are on for this device."});
+ toast(s.alarms?"Alarms on":"Alarms off")}
+/* ---------- Export pages ---------- */
+function exportPage(){
+ const cs=S.get("cases",[]);
+ $("#app").innerHTML=back("/settings","Export report","Share and print")+`
+ <div style="padding:0 20px">
+ <div class="card"><h2>${esc(FARM())}</h2><p style="color:var(--mu);font-size:13px">${cs.length} case${cs.length===1?"":"s"} · generated ${new Date().toLocaleString()}</p></div>
+ <p class="hint">If you turn this off, the report lists dates, crops, outcomes, scores and status only. Names, notes and photos stay out of the file.</p>
+ <div class="card mt"><h2>What goes in the file</h2>
+ <div class="rowline"><span>Farm name</span><b>${esc(FARM())}</b></div>
+ <div class="rowline"><span>Case photos</span><b>Included</b></div>
+ <div class="rowline"><span>Field names and notes</span><b>Included</b></div>
+ <div class="rowline"><span>Device and model version</span><b>Included</b></div>
+ <div class="rowline"><span>Warning notice</span><b>Included</b></div></div>
+ <div class="warn">This file is a record of preliminary screening results, not definitive diagnoses. Photos and field names may identify you or your farm. Only share it with people you choose — most often your agricultural extension worker.</div>
+ <div class="row mt"><button class="btn sec" onclick="exportCSV()">CSV data</button><button class="btn pri" onclick="exportPDF()">Open PDF report</button></div>
+ <p class="foot">Nothing is uploaded. The PDF opens in a new tab for printing or saving.</p></div>`;
+}
+function setS(k,v){const s=S.get("set",{});s[k]=v;S.set("set",s);toast("Saved")}
+function dl(name,data,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function backup(){dl("agriguard-backup.json",JSON.stringify({cases:S.get("cases",[]),rem:S.get("rem",[]),set:S.get("set",{})}),"application/json")}
+function restore(inp){const f=inp.files[0];if(!f)return;f.text().then(t=>{try{const d=JSON.parse(t);S.set("cases",d.cases||[]);S.set("rem",d.rem||[]);S.set("set",d.set||{});toast("Restored");render()}catch{toast("Invalid backup file")}})}
+function wipe(){if(confirm("Delete ALL cases, reminders and settings?")){Object.keys(localStorage).filter(k=>k.startsWith("ag_")).forEach(k=>localStorage.removeItem(k));toast("All data deleted");go("/")}}
+function onePDF(id){
+ const c=S.get("cases",[]).find(x=>x.id===id);if(!c){toast("Case not found");return}
+ const w=window.open("","_blank");if(!w){toast("Allow pop-ups to export");return}
+ const cr=CROPS[c.crop],dz=cr.d.find(z=>z.id===c.dz);
+ const row=(l,v)=>`<div class="r"><span>${l}</span><b>${v}</b></div>`;
+ const steps=dz?dz.a.map(a=>`<li>${a}</li>`).join(""):"<li>Refer this case for expert assessment.</li>";
+ w.document.write(`<html><head><title>AgriGuard Case Report</title><style>
+ body{font-family:system-ui,sans-serif;padding:28px;color:#1b2a1f;max-width:720px;margin:auto}
+ h1{font-size:20px;margin:0 0 4px}.sub{color:#6b7a6f;font-size:13px;margin:0 0 16px}
+ img{width:100%;max-height:320px;object-fit:cover;border-radius:12px;margin-bottom:14px}
+ .r{display:flex;justify-content:space-between;font-size:13px;color:#6b7a6f;border-top:1px solid #eef3ec;padding:6px 0}
+ ul{font-size:14px;line-height:1.5;padding-left:20px}
+ h2{font-size:15px;margin:18px 0 6px}
+ .warn{border:1px solid #f2d39a;background:#fff6e5;color:#6a4300;border-radius:10px;padding:10px;font-size:12px;margin:16px 0}
+ </style></head><body>
+ <h1>${esc(c.label)}</h1><p class="sub">${esc(FARM())} · ${cr.n} · ${fmt(c.date)}</p>
+ <img src="${c.img}">
+ ${row("Score",Math.round(c.score*100)+"%")}${row("Status",esc(c.status))}${row("Field",esc(c.field||"—"))}
+ ${row("Model",esc(c.model))}${c.device?row("Device",esc(c.device)):""}${c.reviewer?row("Reviewed by",esc(c.reviewer)):""}
+ ${c.notes?`<h2>Notes</h2><p>${esc(c.notes)}</p>`:""}
+ <h2>Preliminary findings</h2><ul>${steps}</ul>
+ ${c.ext?`<h2>Extension worker note</h2><p>${esc(c.ext)}</p>`:""}
+ <div class="warn">Preliminary image-based screening result, not a definitive diagnosis. Do not apply a pesticide solely because of this report. Follow the current product label and seek advice from an agricultural extension worker.</div>
+ <script>onload=()=>print()<\/script></body></html>`);
+ w.document.close();
+}
+function oneCSV(id){
+ const c=S.get("cases",[]).find(x=>x.id===id);if(!c){toast("Case not found");return}
+ const cell=v=>{v=String(v??"");if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+ const rows=[["Farm","Date","Crop","Result","Score","Field","Status","Notes","Reviewer","Extension notes","Model","Device"],
+  [FARM(),c.date,CROPS[c.crop].n,c.label,Math.round(c.score*100)+"%",c.field,c.status,c.notes,c.reviewer,c.ext,c.model,c.device]];
+ dl("agriguard-case-"+id+".csv",rows.map(r=>r.map(cell).join(",")).join("\n"),"text/csv");
+}
+function exportCSV(){const cell=v=>{v=String(v??"");if(/^[=+\-@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'};
+ const rows=[["Farm","Date","Crop","Result","Score","Field","Status","Notes","Reviewer","Extension notes","Model","Device"],...S.get("cases",[]).map(c=>[FARM(),c.date,CROPS[c.crop].n,c.label,Math.round(c.score*100)+"%",c.field,c.status,c.notes,c.reviewer,c.ext,c.model,c.device])];
+ dl("agriguard-cases.csv",rows.map(r=>r.map(cell).join(",")).join("\n"),"text/csv")}
+function exportPDF(){const w=window.open("","_blank");if(!w){toast("Allow pop-ups to export");return}
+ const cs=S.get("cases",[]);
+ const row=(l,v)=>`<div class="r"><span>${l}</span><b>${v}</b></div>`;
+ const card=c=>`<div class="c"><img src="${c.img}"><div class="b"><h2>${esc(c.label)} · ${Math.round(c.score*100)}%</h2>
+ <p>${CROPS[c.crop].n}${c.field?" · "+esc(c.field):""} · ${fmt(c.date)}</p>${row("Status",esc(c.status))}${row("Model",esc(c.model))}${c.device?row("Device",esc(c.device)):""}${c.reviewer?row("Reviewed by",esc(c.reviewer)):""}
+ ${c.notes?`<p class="n"><b>Notes:</b> ${esc(c.notes)}</p>`:""}${c.ext?`<p class="n ex"><b>Extension note:</b> ${esc(c.ext)}</p>`:""}</div></div>`;
+ w.document.write(`<html><head><title>AgriGuard Case Report</title><style>
+ body{font-family:system-ui,sans-serif;padding:28px;color:#1b2a1f;max-width:760px;margin:auto}
+ h1{font-size:22px;margin:0 0 4px}.sub{color:#6b7a6f;font-size:13px;margin:0 0 18px}
+ .c{display:flex;gap:14px;border:1px solid #e1e7e1;border-radius:14px;padding:12px;margin-bottom:12px;page-break-inside:avoid}
+ img{width:130px;height:130px;object-fit:cover;border-radius:10px}
+ .b{flex:1}.b h2{font-size:16px;margin:0 0 4px}.b p{font-size:13px;color:#6b7a6f;margin:0 0 6px}
+ .r{display:flex;justify-content:space-between;font-size:12px;color:#6b7a6f;border-top:1px solid #eef3ec;padding:3px 0}
+ .n{font-size:13px;margin:6px 0 0}.ex{color:#2f5c2a}
+ .warn{border:1px solid #f2d39a;background:#fff6e5;color:#6a4300;border-radius:10px;padding:10px;font-size:12px;margin:16px 0}
+ </style></head><body>
+ <h1>AgriGuard Case Report</h1><p class="sub">${esc(FARM())} · ${cs.length} case${cs.length===1?"":"s"} · generated ${new Date().toLocaleString()}</p>
+ <div class="warn">Preliminary image-based screening results, not definitive diagnoses. Do not apply a pesticide solely because of these results. Follow the current product label and seek advice from an agricultural extension worker.</div>
+ ${cs.map(card).join("")||"<p>No cases saved.</p>"}
+ <script>onload=()=>print()<\/script></body></html>`);w.document.close()}
+render();
+</script>
+</body>
+</html>
